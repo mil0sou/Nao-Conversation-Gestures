@@ -32,6 +32,11 @@ Follow these steps to set up the environment and install the necessary dependenc
 
     naoqi documentation found here : http://doc.aldebaran.com/2-8/dev/python/install_guide.html
 
+3. Edit the code 
+
+    Edit each file to use your NAO IP, your computer paths, your google API key :
+    Get one here : https://ai.google.dev/gemini-api/docs/quickstart?hl=fr&lang=python
+
 ## Usage
 
 To start the conversation interface between the NAO robot and Google's Gemini AI, run:
