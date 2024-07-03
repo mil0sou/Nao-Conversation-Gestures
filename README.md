@@ -20,7 +20,7 @@ Follow these steps to set up the environment and install the necessary dependenc
 
     ```bash
     git clone https://github.com/mil0sou/NaoGemini
-    cd NAOGemini
+    cd NaoGemini
     ```
 
 
