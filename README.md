@@ -38,6 +38,7 @@ Follow these steps to set up the environment and install the necessary dependenc
 
 ## Usage
 
+Make sure NAO and your computer are connected to the same network. 
 To start the conversation interface between the NAO robot and Google's Gemini AI, run:
 
 ```bash
