@@ -50,9 +50,6 @@ def ask_gemini(speech):
     return response.text
 
 
-
-
-
 def save_to_txt(response):
     print("Saving to txt file {}".format(txtpath))
     try:
