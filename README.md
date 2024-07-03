@@ -30,12 +30,11 @@ Follow these steps to set up the environment and install the necessary dependenc
     pip install paramiko speech_recognition google.generativeai
     ```
 
-    naoqi documentation found here : http://doc.aldebaran.com/2-8/dev/python/install_guide.html
+    [naoqi installation guide](http://doc.aldebaran.com/2-8/dev/python/install_guide.html) 
 
 3. Edit the code 
 
-    Edit each file to use your NAO IP, your computer paths, your google API key :
-    Get one here : https://ai.google.dev/gemini-api/docs/quickstart?hl=fr&lang=python
+    Edit each file to use your NAO IP, your computer paths, your [google API key](https://ai.google.dev/gemini-api/docs/quickstart?hl=en&lang=python)
 
 ## Usage
 
