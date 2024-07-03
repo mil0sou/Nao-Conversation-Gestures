@@ -23,19 +23,8 @@ Follow these steps to set up the environment and install the necessary dependenc
     cd nao-gemini-conversation
     ```
 
-2. Create a virtual environment and activate it (optional but recommended):
 
-    ```bash
-    # For Python 3.x
-    python3 -m venv venv
-    source venv/bin/activate
-
-    # For Python 2.7
-    virtualenv -p python2.7 venv
-    source venv/bin/activate
-    ```
-
-3. Install the dependencies:
+2. Install the dependencies:
 
     ```bash
     pip install paramiko speech_recognition google.generativeai
