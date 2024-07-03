@@ -19,8 +19,8 @@ Follow these steps to set up the environment and install the necessary dependenc
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/nao-gemini-conversation.git
-    cd nao-gemini-conversation
+    git clone https://github.com/mil0sou/NaoGemini
+    cd NAOGemini
     ```
 
 
