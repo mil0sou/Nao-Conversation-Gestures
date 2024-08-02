@@ -1,14 +1,14 @@
 import speech_recognition as sr
-import paramiko
-import os
+import paramiko,sys,os
 from dotenv import load_dotenv
 import google.generativeai as genai
+from gradio_client import Client
 
-nao_ip = "[your nao ip]"
+nao_ip = "192.168.1.240"
 username = password = "nao"
 remote_path = r"/home/nao/audio/prompt.wav"
-local_path = r"[prompt wav audio file location on your pc]"
-txtpath = r"[prompt txt file location on your pc]"
+local_path = r"D:\plymouth\audioprompt\prompt.wav"
+txtpath = r"D:\plymouth\audioprompt\prompt.txt"
 
 
 def prompt_download():
@@ -29,25 +29,61 @@ def prompt_download():
 
 def recognition():
     r = sr.Recognizer()
-    with sr.WavFile() as source:
-        audio = r.record(source)
+    audio_file_path = r"D:\plymouth\audioprompt\prompt.wav"
+
     try:
-        speech = r.recognize_google(audio)
-        return speech
-    except LookupError:
-        print("Could not understand audio")
+        with sr.AudioFile(audio_file_path) as source:
+            audio = r.record(source)
+        try:
+            speech = r.recognize_google(audio)
+            return speech
+        except sr.UnknownValueError:
+            print("Google Speech Recognition could not understand audio")
+        except sr.RequestError as e:
+            print(f"Could not request results from Google Speech Recognition service; {e}")
+    except FileNotFoundError:
+        print(f"File not found: {audio_file_path}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+    return None
 
 
 def ask_gemini(speech):
     load_dotenv()
     genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
     model = genai.GenerativeModel("gemini-1.0-pro-latest")
-    response = model.generate_content(
-        "You are a NAO robot, your name is NAO, and you exist at Plymouth university. Answer in 2 simple sentences."
-        + speech
+    default_prompt = """You are a NAO robot, your name is NAO, 
+    and you exist at Plymouth university, 
+    but don't talk about it unless you're asked. 
+    You know everything about everything. 
+    Answer to the following question in two simple sentences : """
+    response = model.generate_content(default_prompt + speech)
+    responsetxt = response.text
+    responsetxt = responsetxt.replace(u'à', u'a').replace(u'é', u'e').replace(u'è', u'e').replace(u'ê', u'e').replace(u'ù', u'u').replace(u'ç', u'c').replace(u'ô', u'o')
+
+    print("\n", responsetxt)
+    return responsetxt
+
+def ask_llama(speech):
+    client = Client("gokaygokay/Gemma-2-llamacpp")
+    result = client.predict(
+            message="Hello!!",
+            model="gemma-2-27b-it-Q5_K_M.gguf",
+            system_message="""You are a NAO robot, your name is NAO, 
+        and you exist at Plymouth university, 
+        but don't talk about it unless you're asked. 
+        You know everything about everything. 
+        Answer directly to the following question in two simple sentences : """ + speech,
+            max_tokens=2048,
+            temperature=0.7,
+            top_p=0.95,
+            top_k=40,
+            repeat_penalty=1.1,
+            api_name="/chat"
     )
-    print("\n", response.text)
-    return response.text
+    print("\n", result)
+    return result
 
 
 def save_to_txt(response):
@@ -62,10 +98,22 @@ def save_to_txt(response):
 
 def main():
     prompt_download()
-    speech = recognition()
-    print("\nprompt :", speech, "\n")
-    response = ask_gemini(speech)
-    save_to_txt(response)
+    try:
+        speech = recognition()
+        if speech:
+            print(f"Recognized speech: {speech}")
+            print("\nprompt :", speech, "\n")
+            response = ask_gemini(speech)
+            save_to_txt(response)
+            sys.exit(0)
+
+        else:
+            print("No speech recognized, or an error occurred.")
+            response = "I didn't understand what you said. Can you repeat? "
+            save_to_txt(response)
+            sys.exit(0)
+    except KeyboardInterrupt:
+        print("Interrupted by user, shutting down")
 
 
 if __name__ == "__main__":
