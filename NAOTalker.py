@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from naoqi import ALProxy
+import time
 
 nao_ip = "192.168.1.240"
 nao_port = 9559
@@ -30,6 +31,7 @@ def say_response(response):
     emotion = "animations/Sit/BodyTalk/BodyTalk_1"
     message = str(response).encode('utf-8')
     tts2.say('^start({emotion}) {message} ^wait({emotion})'.format(emotion=emotion, message=message))
+    time.sleep(0.5)
 
 response = open_response()
 say_response(response)
