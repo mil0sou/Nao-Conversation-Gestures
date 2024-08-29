@@ -14,9 +14,9 @@ Follow these steps to set up the environment and install the necessary dependenc
 - `naoqi`
 - `speech_recognition`
 - `google.generativeai`
--  pykinect_azure
--  socket
--  numpy
+- `pykinect_azure`
+- `socket`
+- `numpy`
 
 ### Setup
 
