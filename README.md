@@ -32,17 +32,21 @@ Follow these steps to set up the environment and install the necessary dependenc
 
 2. Install the dependencies:
 
+
     ```bash
     pip install numpy pykinect_azure llamaapi python-dotenv SpeechRecognition  
     pip install paramiko
     pip install -U google-generativeai
     ```
 
-    [naoqi download](https://www.aldebaran.com/en/support/nao-6/downloads-softwares)
-   
-    [naoqi installation guide](http://doc.aldebaran.com/2-8/dev/python/install_guide.html)
+    [naoqi download](https://www.aldebaran.com/en/support/nao-6/downloads-softwares) 
 
-4. Edit the code 
+    [naoqi installation guide](http://doc.aldebaran.com/2-8/dev/python/install_guide.html) 
+
+    [Microsoft Visual Package](https://www.microsoft.com/en-us/download/details.aspx?id=26999)
+
+
+3. Edit the code 
 
     Edit each file to use your NAO IP, your computer paths, your [google API key](https://ai.google.dev/gemini-api/docs/quickstart?hl=en&lang=python)
 
