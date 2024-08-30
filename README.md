@@ -33,10 +33,13 @@ Follow these steps to set up the environment and install the necessary dependenc
 2. Install the dependencies:
 
     ```bash
-    pip install paramiko speech_recognition google.generativeai
+    pip install numpy pykinect_azure llamaapi python-dotenv SpeechRecognition  
+    pip install paramiko
+    pip install -U google-generativeai
     ```
 
-    [naoqi installation guide](http://doc.aldebaran.com/2-8/dev/python/install_guide.html) 
+    [naoqi download](https://www.aldebaran.com/en/support/nao-6/downloads-softwares)
+    [naoqi installation guide](http://doc.aldebaran.com/2-8/dev/python/install_guide.html)
 
 3. Edit the code 
 
