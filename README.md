@@ -39,9 +39,10 @@ Follow these steps to set up the environment and install the necessary dependenc
     ```
 
     [naoqi download](https://www.aldebaran.com/en/support/nao-6/downloads-softwares)
+   
     [naoqi installation guide](http://doc.aldebaran.com/2-8/dev/python/install_guide.html)
 
-3. Edit the code 
+4. Edit the code 
 
     Edit each file to use your NAO IP, your computer paths, your [google API key](https://ai.google.dev/gemini-api/docs/quickstart?hl=en&lang=python)
 
