@@ -38,9 +38,14 @@ def open_response():    #open the txt file and get the response from the LLM
 
 
 def say_response(response):
+    
+
+
     tts = ALProxy("ALAnimatedSpeech", nao_ip, nao_port) 
     emotion = "animations/Sit/BodyTalk/BodyTalk_1" #speaks with an animation
     message = str(response).encode('utf-8')
+    """for joint in ununsed_joints: # not moving parts 
+        motionProxy.setStiffnesses(joint, 0.0)"""
     tts.say('^start({emotion}) {message} ^wait({emotion})'.format(emotion=emotion, message=message))
     time.sleep(0.5)
 

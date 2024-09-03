@@ -1,4 +1,199 @@
+# -*- coding: UTF-8 -*-
+import time
+from naoqi import ALProxy
+import matplotlib.pyplot as plt
+
+IP = "192.168.1.240"
+PORT = 9559
+near = False
+
+faceProxy = ALProxy("ALFaceDetection", IP, PORT)
+faceProxy.subscribe("Test_Face", 500, 0.0)
+memValue = "FaceDetected"
+memoryProxy = ALProxy("ALMemory", IP, PORT)
+
+def round_points(points):
+    return [round(p, 2) for p in points]
+
+def checknear(val):
+    global near  
+    if val and isinstance(val, list) and len(val) >= 2:
+        faceInfoArray = val[1]
+        for faceInfo in faceInfoArray:
+            if isinstance(faceInfo, list) and len(faceInfo) >= 2:
+                extraInfo = faceInfo[1]
+                leftEyePoints = round_points(extraInfo[3])
+                rightEyePoints = round_points(extraInfo[4])
+                print(leftEyePoints[:6] ,rightEyePoints[:6])
+                print
+                total_sum=0
+                for left, right in zip(leftEyePoints, rightEyePoints):
+                    total_sum += abs(left) + abs(right)
+                print(total_sum)
+                if "truc":
+                    near = True
+                else:
+                    near = False
+    else:
+        #print("no face")
+        near = False
+    return near
+
+left_eye_history = [[] for _ in range(6)]
+right_eye_history = [[] for _ in range(6)]
+x_values = [] 
+
+def update_plots(ax, leftEyePoints, rightEyePoints, step):
+    x_values.append(step)
+
+    for i in range(6):
+        left_eye_history[i].append(leftEyePoints[i])
+        right_eye_history[i].append(rightEyePoints[i])
+        
+        ax[i].cla() 
+        ax[i].plot(x_values, left_eye_history[i], marker='o', color='b', label='Left Eye')
+        ax[i].plot(x_values, right_eye_history[i], marker='o', color='r', label='Right Eye')
+        
+        ax[i].set_xlim(0, max(x_values)) 
+        ax[i].set_ylim(-1, 1)
+        ax[i].legend(loc='upper right')
+        ax[i].set_title('Point {}'.format(i + 1))
+
+
+def main():
+    fig, ax = plt.subplots(2, 6, figsize=(15, 5))
+    ax = ax.ravel()  
+    step = 0  # Initialisation de l'étape
+    while True:
+        #for i in range(0,30):
+        time.sleep(0.1)
+        val = memoryProxy.getData(memValue)
+        near = checknear(val)
+
+        if val and isinstance(val, list) and len(val) >= 2:
+            faceInfoArray = val[1]
+            for faceInfo in faceInfoArray:
+                if isinstance(faceInfo, list) and len(faceInfo) >= 2:
+                    extraInfo = faceInfo[1]
+                    leftEyePoints = round_points(extraInfo[3])
+                    rightEyePoints = round_points(extraInfo[4])
+                    #update_plots(ax, leftEyePoints, rightEyePoints, step)
+                    step += 1  # Incrémenter l'étape
+        #plt.show()
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+'''import time, socket
+from naoqi import ALProxy
+
+IP = "192.168.1.240"
+PORT = 9559
+near = False
+
+
+faceProxy = ALProxy("ALFaceDetection", IP, PORT)
+faceProxy.subscribe("Test_Face", 500, 0.0 )
+memValue = "FaceDetected"
+memoryProxy = ALProxy("ALMemory", IP, PORT)
+
+def round_points(points):
+    return [round(p, 2) for p in points]
+
+def checknear(val):
+    if val and isinstance(val, list) and len(val) >= 2:
+        faceInfoArray = val[1]
+        for faceInfo in faceInfoArray:
+            if isinstance(faceInfo, list) and len(faceInfo) >= 2:
+                extraInfo = faceInfo[1]
+                leftEyePoints = round_points(extraInfo[3])
+                rightEyePoints = round_points(extraInfo[4]) 
+                print(leftEyePoints[:6])
+                print(rightEyePoints[:6])
+                print
+                if "truc":
+                    near = True
+                else:
+                    near = False
+    else:
+        print("no face")
+        near = False
+    return near
+
+def main():
+    while True:
+        time.sleep(0.05)
+        val = memoryProxy.getData(memValue)
+        near = checknear(val)
+
+main()'''
+
+
+
+
 #different drafts and tests
+'''import subprocess
+python27path = r"C:\Python27\python.exe"
+python312path = r"C:\Users\soula\AppData\Local\Microsoft\WindowsApps\python3.exe"
+
+def runListener():
+    subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOListener.py"])
+
+def runThinker():
+    subprocess.run([python312path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOThinker.py"])
+
+def runTalker():
+    subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOTalker.py"])
+
+def main():
+    while True:
+        runListener()   
+        runThinker()
+        runTalker()
+
+if __name__ == "__main__":
+    main()'''
+    
+    
+'''import subprocess
+import threading
+
+python27path = r"C:\Python27\python.exe"
+python312path = r"C:\Users\soula\AppData\Local\Microsoft\WindowsApps\python3.exe"
+
+def runListener():
+    subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOFaceListener.py"])
+
+def runTracker():
+    subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOFaceTracker.py"])
+
+def runThinker():
+    subprocess.run([python312path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOThinker.py"])
+
+def runTalker():
+    subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOTalker.py"])
+
+def main():
+    while True:
+        listener1_thread = threading.Thread(target=runListener)
+        listener2_thread = threading.Thread(target=runTracker)
+        
+        listener1_thread.start()
+        listener2_thread.start()
+        
+        while listener1_thread.is_alive() and listener2_thread.is_alive():
+            listener1_thread.join(timeout=1)
+            listener2_thread.join(timeout=1)
+        
+        runThinker()
+        runTalker()
+
+if __name__ == "__main__":
+    main()'''
+
 
 
 """#!/usr/bin/env python

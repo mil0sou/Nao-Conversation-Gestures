@@ -71,7 +71,7 @@ def ask_gemini(speech):
     model = genai.GenerativeModel("gemini-1.0-pro-latest")
     response = model.generate_content(default_prompt + speech)
     responsetxt = response.text # accents would crash nao text to speech 
-    responsetxt = responsetxt.replace(u'à', u'a').replace(u'â', u'a').replace(u'ä', u'a').replace(u'ç', u'c').replace(u'é', u'e').replace(u'è', u'e').replace(u'ê', u'e').replace(u'ë', u'e').replace(u'î', u'i').replace(u'ï', u'i').replace(u'ô', u'o').replace(u'ö', u'o').replace(u'ù', u'u').replace(u'û', u'u').replace(u'ü', u'u').replace(u'ÿ', u'y').replace(u'Æ', u'AE').replace(u'œ', u'oe')
+    responsetxt = responsetxt.replace(u'Î', u'I').replace(u'à', u'a').replace(u'â', u'a').replace(u'ä', u'a').replace(u'ç', u'c').replace(u'é', u'e').replace(u'è', u'e').replace(u'ê', u'e').replace(u'ë', u'e').replace(u'î', u'i').replace(u'ï', u'i').replace(u'ô', u'o').replace(u'ö', u'o').replace(u'ù', u'u').replace(u'û', u'u').replace(u'ü', u'u').replace(u'ÿ', u'y').replace(u'Æ', u'AE').replace(u'œ', u'oe')
     print("\n", responsetxt)
     return responsetxt
 
