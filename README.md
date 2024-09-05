@@ -3,6 +3,8 @@
 The first project allows you to interact with Google's Gemini or Meta's LLama3 conversational AI through a NAO robot.
 The second will make the robot move by imitating your body movements (with an azure kinect DK camera) (still in developement)
 
+The robots eyes will turn yellow when he detects your face, and green when recording your request. 
+
 ## Installation
 
 Follow these steps to set up the environment and install the necessary dependencies.
