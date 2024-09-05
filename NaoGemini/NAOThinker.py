@@ -30,30 +30,6 @@ def open_history():
         my_string = file.read()#.decode('utf-8')
     return my_string
 
-
-
-
-def ask_llama(speech):
-    
-    load_dotenv() #load the key from the .env file
-    llama_key = os.getenv("LLAMA_API_KEY")
-    llama = LlamaAPI(llama_key) # my llama api key
-    history = open_history()
-    prompt = history + "\n here is your current chat history, use this to remember context from earlier : \n" + speech
-    print(prompt)
-    api_request_json = {
-        "model": "llama-13b-chat",
-        "messages": [
-            {"role": "user", "content": prompt}
-        ],
-        "max_tokens": 150,  # how detailed the response will be 
-        "temperature": 0.8,  # how creative 
-    }
-    response = llama.run(api_request_json)
-    responsetxt = response.json()["choices"][0]["message"]["content"]
-    print("\n", responsetxt)
-    return responsetxt
-
         
 def prompt_download():  #get the audio from the robot and save it using ssh (paramiko)
     ssh = paramiko.SSHClient()
@@ -104,6 +80,26 @@ def ask_gemini(speech):
     print("\n", responsetxt)
     return responsetxt
 
+def ask_llama(speech):
+    load_dotenv() #load the key from the .env file
+    llama_key = os.getenv("LLAMA_API_KEY")
+    llama = LlamaAPI(llama_key) # my llama api key
+    history = open_history()
+    prompt = history + "\n here is your current chat history, use this to remember context from earlier : \n" + speech
+    print(prompt)
+    api_request_json = {
+        "model": "llama-13b-chat",
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "max_tokens": 150,  # how detailed the response will be 
+        "temperature": 0.8,  # how creative 
+    }
+    response = llama.run(api_request_json)
+    responsetxt = response.json()["choices"][0]["message"]["content"]
+    print("\n", responsetxt)
+    return responsetxt
+
 def save_to_txt(response):
     print("Saving to txt file {}".format(txtpath))
     try:
@@ -125,7 +121,6 @@ def save_prompt_and_response(prompt, response):
         print(f"Error: {str(e)}")
 
 
-
 def main():
     prompt_download()
     try:
@@ -134,7 +129,6 @@ def main():
             print(f"Recognized speech: {speech}")
             print("\nprompt :", speech, "\n")
             """choose here between gemini and llama3"""
-
             #response = ask_gemini(speech)
             response = ask_llama(speech)
             save_to_txt(response)
