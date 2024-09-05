@@ -57,24 +57,24 @@ def checkface(val):
                         total_sum=0
                         for left, right in zip(leftEyePoints, rightEyePoints):
                             total_sum += abs(left) + abs(right)
-                        print(total_sum)
+                        #print(total_sum)
                         if total_sum < DISTANCE_TRESHOLD:
-                            print("VISAGE DE FACE !!")
-                            print(leftEyePoints[:6] ,rightEyePoints[:6])
+                            #print("VISAGE DE FACE !!")
+                            #print(leftEyePoints[:6] ,rightEyePoints[:6])
                             facing = True
                         else:
-                            print("visage de face mais trop loin ")
+                            #print("visage de face mais trop loin ")
                             facing = False
                         #tts.say("Hi!")
                     else:
-                       print("visage detecte mais pas de face")
+                       #print("visage detecte mais pas de face")
                        facing = False
                 else:
-                    print("visage semi visible ")
+                    #print("visage semi visible ")
                     facing = False
    
     else:
-        print("Aucun visage detecte")
+        #print("Aucun visage detecte")
         facing = False
     return facing
 

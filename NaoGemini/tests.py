@@ -1,4 +1,116 @@
-# -*- coding: UTF-8 -*-
+import naoqi
+import numpy as np
+import pyaudio
+
+class SoundReceiverModule:
+    def __init__(self, nao_ip, module_name):
+        # Initialise le module avec l'adresse IP du robot NAO et le nom du module
+        self.strNaoIp = nao_ip
+        self.module_name = module_name
+
+    def start(self):
+        # Cree un proxy pour interagir avec le module ALAudioDevice de NAO
+        audio = naoqi.ALProxy("ALAudioDevice", self.strNaoIp, 9559)
+
+        # Configuration des parametres audio
+        nNbrChannelFlag = 3  # Recevoir uniquement le canal avant (FRONTCHANNEL)
+        nDeinterleave = 0    # Ne pas desentrelacer les donnees
+        nSampleRate = 16000  # Taux d'echantillonnage a 16 kHz
+
+        # Configure les preferences du client audio
+        audio.setClientPreferences(self.getName(), nSampleRate, nNbrChannelFlag, nDeinterleave)
+
+        # S'abonner au flux audio
+        audio.subscribe(self.getName())
+        print("INF: SoundReceiver: started!")
+
+    def processRemote(self, nbOfChannels, nbrOfSamplesByChannel, aTimeStamp, buffer_audio):
+        """
+        Methode appelee par le module ALAudioDevice pour traiter les donnees audio.
+        """
+        # Convertir le buffer audio en un tableau NumPy d'entiers 16 bits
+        aSoundDataInterlaced = np.fromstring(str(buffer_audio), dtype=np.int16)
+
+        # Reshape le tableau pour organiser les donnees par canaux
+        aSoundData = np.reshape(aSoundDataInterlaced, (nbOfChannels, nbrOfSamplesByChannel), 'F')
+
+        # Si necessaire, traiter les donnees audio
+        if True:
+            # Calculer la valeur de crete maximale dans les donnees audio
+            aPeakValue = np.max(aSoundData)
+            
+            # Si la valeur de crete depasse 16000, imprimer la valeur
+            if aPeakValue > 16000:
+                print("Peak: %s" % aPeakValue)
+
+            # Initialiser PyAudio pour la lecture en temps reel
+            p = pyaudio.PyAudio()
+
+            # Definir une fonction de rappel pour PyAudio
+            def callback(in_data, frame_count, time_info, status):
+                return (buffer_audio, pyaudio.paContinue)
+
+            # Debug: imprimer des informations de diagnostic
+            print("Nombre de canaux: ", nbOfChannels)
+            print("Nombre d'echantillons par canal: ", nbrOfSamplesByChannel)
+            print("Timestamp: ", aTimeStamp)
+
+            # Ouvrir un flux PyAudio pour la lecture audio
+            stream = p.open(format=p.get_format_from_width(2),  # Format des donnees audio
+                            channels=nbOfChannels,             # Nombre de canaux
+                            rate=nbrOfSamplesByChannel,         # Taux d'echantillonnage
+                            output=True,                       # Specifie que c'est une sortie
+                            stream_callback=callback)          # Utilise le callback defini
+
+            # Demarrer le flux audio
+            stream.start_stream()
+
+    def getName(self):
+        # Retourne le nom du module pour l'utiliser dans les preferences audio
+        return self.module_name
+
+    def stop(self):
+        # Methode pour arreter la reception audio
+        audio = naoqi.ALProxy("ALAudioDevice", self.strNaoIp, 9559)
+        audio.unsubscribe(self.getName())
+        print("INF: SoundReceiver: stopped!")
+
+# Exemple d'utilisation
+if __name__ == "__main__":
+    # Adresse IP du robot NAO
+    nao_ip = "192.168.1.240"
+    module_name = "SoundReceiver"
+
+    # Creer une instance du module SoundReceiver
+    receiver = SoundReceiverModule(nao_ip, module_name)
+
+    # Demarrer le module pour recevoir et traiter l'audio
+    receiver.start()
+
+    try:
+        # Simuler une boucle de traitement continue
+        while True:
+            pass
+    except KeyboardInterrupt:
+        # Arreter le module proprement en cas d'interruption
+        receiver.stop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""# -*- coding: UTF-8 -*-
 import time
 from naoqi import ALProxy
 import matplotlib.pyplot as plt
@@ -63,7 +175,7 @@ def update_plots(ax, leftEyePoints, rightEyePoints, step):
 def main():
     fig, ax = plt.subplots(2, 6, figsize=(15, 5))
     ax = ax.ravel()  
-    step = 0  # Initialisation de l'étape
+    step = 0  # Initialisation de l'etape
     while True:
         #for i in range(0,30):
         time.sleep(0.1)
@@ -78,13 +190,13 @@ def main():
                     leftEyePoints = round_points(extraInfo[3])
                     rightEyePoints = round_points(extraInfo[4])
                     #update_plots(ax, leftEyePoints, rightEyePoints, step)
-                    step += 1  # Incrémenter l'étape
+                    step += 1  # Incrementer l'etape
         #plt.show()
 
 if __name__ == "__main__":
     main()
 
-
+"""
 
 
 '''import time, socket

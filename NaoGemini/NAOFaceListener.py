@@ -20,7 +20,7 @@ import threading
 import socket
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('localhost', 12345))
+server_socket.bind(("localhost", 12345))
 server_socket.listen(1)
 conn, addr = server_socket.accept()
 
@@ -70,17 +70,30 @@ ununsed_joints = [
     "RAnkleRoll",
 ]
 
+
+leds = ALProxy("ALLeds", IP, PORT)
+leds.on("FaceLeds")
+
+
 def round_points(points):
     return [round(p, 2) for p in points]
+
 
 def update_status():
     global facing, recording
     status = "face : {facing} | recording : {recording}".format(
-        facing="TRUE" if facing else "false",
-        recording="TRUE" if recording else "false"
+        facing="TRUE" if facing else "false", recording="TRUE" if recording else "false"
     )
     sys.stdout.write("\r" + status)
     sys.stdout.flush()
+    if recording:
+        leds.fadeRGB("FaceLeds", 0x00FF00, 0.01)  # vert
+    else:
+        if facing:
+            leds.fadeRGB("FaceLeds", 0xFFFF00, 0.01)  # Jaune
+        else:
+            leds.fadeRGB("FaceLeds", 0xFFFFFF, 0.01)  # blanc
+
 
 class SoundDetectionModule(ALModule):
     def __init__(self, name, IP, PORT):
@@ -91,12 +104,12 @@ class SoundDetectionModule(ALModule):
         self.sound_detection = ALProxy("ALSoundDetection", IP, PORT)
         self.sound_detection.setParameter("Sensibility", AUDIO_THRESHOLD)
 
-    #called function when sound is detected
+    # called function when sound is detected
     def onSoundDetected(self, eventName, value, subscriberIdentifier):
         global recording, recording_thread, facing
         print("Sound detected: ", value)
-        if not recording: #starts recording and timer 
-            if facing: 
+        if not recording:  # starts recording and timer
+            if facing:
                 recording = True
                 if recording_thread is not None and recording_thread.is_alive():
                     recording_thread.cancel()
@@ -104,17 +117,19 @@ class SoundDetectionModule(ALModule):
             else:
                 print("sound detected but not facing !")
                 pass
-        else: #restarts timer if sound is detected while recording
+        else:  # restarts timer if sound is detected while recording
             if recording_thread is not None and recording_thread.is_alive():
                 recording_thread.cancel()
-            recording_thread = threading.Timer(listen_duration, stop_recording) #if timer is over, stops recording 
+            recording_thread = threading.Timer(
+                listen_duration, stop_recording
+            )  # if timer is over, stops recording
             recording_thread.start()
 
 
 def start_recording():
     global recording, recording_thread
     tts = ALProxy("ALTextToSpeech", IP, PORT)
-    tts.say("Hi!") # if sound is detected 
+    # tts.say("Hi!") # if sound is detected
     audio_recorder = ALProxy("ALAudioRecorder", IP, PORT)
     audio_recorder.stopMicrophonesRecording()
     audio_recorder.startMicrophonesRecording(audio_path, "wav", 16000, [0, 0, 1, 0])
@@ -125,6 +140,7 @@ def stop_recording():
     global recording, myBroker, quitpg
     audio_recorder = ALProxy("ALAudioRecorder", IP, PORT)
     audio_recorder.stopMicrophonesRecording()
+    leds.fadeRGB("FaceLeds", 0x0000FF, 0.01)  # blanc
     print("Recording stopped.")
     recording = False
     quitpg = True
@@ -135,7 +151,7 @@ def stop_recording():
 
 def main(IP, PORT=9559):
     global SoundDetection, recording, myBroker, facing
-    
+
     basic_awareness = ALProxy("ALBasicAwareness", IP, PORT)
     motion = ALProxy("ALMotion", IP, PORT)
 
@@ -147,8 +163,8 @@ def main(IP, PORT=9559):
         motion.setStiffnesses(joint, 1.0)
         # motion.setAngles(joint, 0, 0.5)
 
-    motion.wakeUp() #robot will track your face
-    
+    motion.wakeUp()  # robot will track your face
+
     basic_awareness.startAwareness()
     """postureProxy = ALProxy("ALRobotPosture", IP, PORT)
     postureProxy.goToPosture("Sit", 1.0)"""
@@ -159,25 +175,20 @@ def main(IP, PORT=9559):
             time.sleep(0.05)
             data = conn.recv(1024)
             facing = "1" in data
-            #update_status()
+            update_status()
 
-
-
-
-
-
-            #print("face detected:", data)
+            # print("face detected:", data)
             # facing = data == "1" #str to bool
-             #
+            #
             if recording:
-                #print("Recording...")
+                # print("Recording...")
                 pass
             else:
-                #print("Waiting for sound...")
+                # print("Waiting for sound...")
                 pass
 
     except quitpg:
-        #print("Interrupted by user, shutting down")
+        # print("Interrupted by user, shutting down")
         SoundDetection.memory.unsubscribeToEvent("SoundDetected", "SoundDetection")
         myBroker.shutdown()
         conn.close()
@@ -190,5 +201,3 @@ def main(IP, PORT=9559):
 
 if __name__ == "__main__":
     main(IP, PORT)
-    
-    

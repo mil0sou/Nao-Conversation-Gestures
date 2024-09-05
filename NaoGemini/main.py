@@ -9,6 +9,28 @@
 
 import subprocess
 import threading
+import os
+
+historypath = r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\promptHistory.txt"
+
+default_prompt = """You are a NAO robot, your name is NAO, 
+and you exist at Plymouth university, 
+but don't talk about it unless you're asked. 
+You know everything about everything. 
+Answer to the following question in two simple sentences: 
+--------------------------------------------------
+"""
+
+def reset_txt_file():
+    try:
+        if os.path.exists(historypath):
+            os.remove(historypath)
+            print(f"{historypath} has been reset.")
+        with open(historypath, "w") as file:
+            file.write(default_prompt + "\n")
+        print(f"Default prompt has been written to {historypath}\n")
+    except Exception as e:
+        print(f"Error: {str(e)}")
 
 python27path = r"C:\Python27\python.exe"
 python312path = r"C:\Users\soula\AppData\Local\Microsoft\WindowsApps\python3.exe"
@@ -26,6 +48,7 @@ def runTalker():
     subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOTalker.py"])
 
 def main():
+    reset_txt_file()
     while True:
         listener1_thread = threading.Thread(target=runListener)
         listener2_thread = threading.Thread(target=runTracker)
