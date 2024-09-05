@@ -1,5 +1,4 @@
-# -*- coding: UTF-8 -*-
-
+# -*- coding: utf-8 -*-
 # ===============================================
 #  File       : main.py
 #  Author     : Milo Soulard
@@ -9,12 +8,38 @@
 # ===============================================
 
 import subprocess
+import threading
+import os
+
+historypath = r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\promptHistory.txt"
+
+default_prompt = """You are a NAO robot, your name is NAO, 
+and you exist at Plymouth university, 
+but don't talk about it unless you're asked. 
+You know everything about everything. 
+Answer to the following question in two simple sentences: 
+--------------------------------------------------
+"""
+
+def reset_txt_file():
+    try:
+        if os.path.exists(historypath):
+            os.remove(historypath)
+            print(f"{historypath} has been reset.")
+        with open(historypath, "w") as file:
+            file.write(default_prompt + "\n")
+        print(f"Default prompt has been written to {historypath}\n")
+    except Exception as e:
+        print(f"Error: {str(e)}")
 
 python27path = r"C:\Python27\python.exe"
 python312path = r"C:\Users\soula\AppData\Local\Microsoft\WindowsApps\python3.exe"
 
 def runListener():
-    subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOListener.py"])
+    subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOFaceTracker.py"])
+
+def runTracker():
+    subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOFaceListener.py"])
 
 def runThinker():
     subprocess.run([python312path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOThinker.py"])
@@ -23,10 +48,21 @@ def runTalker():
     subprocess.run([python27path, r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\NAOTalker.py"])
 
 def main():
+    reset_txt_file()
     while True:
-        runListener()   
+        listener1_thread = threading.Thread(target=runListener)
+        listener2_thread = threading.Thread(target=runTracker)
+        
+        listener1_thread.start()
+        listener2_thread.start()
+        
+        while listener1_thread.is_alive() and listener2_thread.is_alive():
+            listener1_thread.join(timeout=1)
+            listener2_thread.join(timeout=1)
+        
         runThinker()
         runTalker()
 
 if __name__ == "__main__":
     main()
+

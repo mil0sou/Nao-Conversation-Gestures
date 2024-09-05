@@ -5,13 +5,15 @@
 #  Author     : Milo Soulard
 #  Python     : 2.7
 #  Date       : Summer 2024
-#  Description: Detects audio signals
+#  Description: NOT USED ANYMORE
+# 
+#               Detects audio signals
 #               Maybe detects face
 #               Starts the recording on the robot
 #               Save the audio on the robot's disk
 # ===============================================
 
-"""import sys
+import sys
 from naoqi import ALProxy, ALModule, ALBroker
 import time
 import threading
@@ -151,7 +153,7 @@ def main(IP, PORT=9559):
 
 
 if __name__ == "__main__":
-    main(IP, PORT)"""
+    main(IP, PORT)
 
 
 
@@ -160,7 +162,7 @@ if __name__ == "__main__":
 # https://support.old.unitedrobotics.group/en/support/tickets/8161
 
 
-import sys, time, threading
+"""import sys, time, threading
 from naoqi import ALProxy, ALModule, ALBroker
 
 IP = "192.168.1.240"
@@ -318,5 +320,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+"""
     

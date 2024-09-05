@@ -20,15 +20,38 @@ from llamaapi import LlamaAPI
 nao_ip = "192.168.1.240"
 username = password = "nao"
 remote_path = r"/home/nao/audio/prompt.wav"
-local_path = r"D:\plymouth\audioprompt\prompt.wav"
-txtpath = r"D:\plymouth\audioprompt\prompt.txt"
+local_path = r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\prompt.wav"
+txtpath = r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\prompt.txt"
+historypath = r"D:\plymouth\code\NaoGeminiGestures\NaoGemini\promptHistory.txt"
 
-default_prompt = """You are a NAO robot, your name is NAO, 
-and you exist at Plymouth university, 
-but don't talk about it unless you're asked. 
-You know everything about everything. 
-Answer to the following question in two simple sentences : """
 
+def open_history():   
+    with open(historypath, 'r') as file:
+        my_string = file.read()#.decode('utf-8')
+    return my_string
+
+
+
+
+def ask_llama(speech):
+    llama = LlamaAPI("LL-pZPlvP5fCPF8feUFty3uooyp02FiiJB8wluy7wpWT3ivgwi7ImHLtTyGZAMF10Wi")  # your Llama API key
+    history = open_history()
+    prompt = history + "\n here is your current chat history, use this to remember context from earlier : \n" + speech
+    print(prompt)
+    api_request_json = {
+        "model": "llama-13b-chat",
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "max_tokens": 150,  # how detailed the response will be 
+        "temperature": 0.8,  # how creative 
+    }
+    response = llama.run(api_request_json)
+    responsetxt = response.json()["choices"][0]["message"]["content"]
+    print("\n", responsetxt)
+    return responsetxt
+
+        
 def prompt_download():  #get the audio from the robot and save it using ssh (paramiko)
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -47,9 +70,8 @@ def prompt_download():  #get the audio from the robot and save it using ssh (par
 
 def recognition():  #use the audio and recognize it with google 
     r = sr.Recognizer()
-    audio_file_path = r"D:\plymouth\audioprompt\prompt.wav"
     try:
-        with sr.AudioFile(audio_file_path) as source:
+        with sr.AudioFile(local_path) as source:
             audio = r.record(source)
         try:
             speech = r.recognize_google(audio)
@@ -59,7 +81,7 @@ def recognition():  #use the audio and recognize it with google
         except sr.RequestError as e:
             print(f"Could not request results from Google Speech Recognition service; {e}")
     except FileNotFoundError:
-        print(f"File not found: {audio_file_path}")
+        print(f"File not found: {local_path}")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
     return None
@@ -69,25 +91,13 @@ def ask_gemini(speech):
     load_dotenv() #load the key from the .env file
     genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
     model = genai.GenerativeModel("gemini-1.0-pro-latest")
-    response = model.generate_content(default_prompt + speech)
-    responsetxt = response.text # accents would crash nao text to speech 
-    responsetxt = responsetxt.replace(u'à', u'a').replace(u'â', u'a').replace(u'ä', u'a').replace(u'ç', u'c').replace(u'é', u'e').replace(u'è', u'e').replace(u'ê', u'e').replace(u'ë', u'e').replace(u'î', u'i').replace(u'ï', u'i').replace(u'ô', u'o').replace(u'ö', u'o').replace(u'ù', u'u').replace(u'û', u'u').replace(u'ü', u'u').replace(u'ÿ', u'y').replace(u'Æ', u'AE').replace(u'œ', u'oe')
-    print("\n", responsetxt)
-    return responsetxt
+    history = open_history()
+    prompt = history + "\n here is your current chat history, use this to remember context from earlier : \n" + speech
+    print(prompt)
 
-def ask_llama(speech):
-    llama = LlamaAPI("LL-pZPlvP5fCPF8feUFty3uooyp02FiiJB8wluy7wpWT3ivgwi7ImHLtTyGZAMF10Wi") # my llama api key
-    prompt = default_prompt + speech
-    api_request_json = {
-        "model": "llama-13b-chat",
-        "messages": [
-            {"role": "user", "content": prompt}
-        ],
-        "max_tokens": 150,      # how datailled the response will be 
-        "temperature": 0.8,     # how creative 
-    }
-    response = llama.run(api_request_json)
-    responsetxt = response.json()["choices"][0]["message"]["content"]
+    response = model.generate_content(prompt)
+    responsetxt = response.text # accents would crash nao text to speech 
+    responsetxt = responsetxt.replace(u'Î', u'I').replace(u'à', u'a').replace(u'â', u'a').replace(u'ä', u'a').replace(u'ç', u'c').replace(u'é', u'e').replace(u'è', u'e').replace(u'ê', u'e').replace(u'ë', u'e').replace(u'î', u'i').replace(u'ï', u'i').replace(u'ô', u'o').replace(u'ö', u'o').replace(u'ù', u'u').replace(u'û', u'u').replace(u'ü', u'u').replace(u'ÿ', u'y').replace(u'Æ', u'AE').replace(u'œ', u'oe')
     print("\n", responsetxt)
     return responsetxt
 
@@ -100,6 +110,19 @@ def save_to_txt(response):
     except Exception as e:
         print(f"Error : {str(e)}")
 
+
+def save_prompt_and_response(prompt, response):
+    """Save the prompt and response in the main text file."""
+    try:
+        entry = f"Prompt: {prompt}\nResponse: {response}\n{'-'*50}\n"
+        with open(historypath, "a") as file:
+            file.write(entry)
+        print(f"Saved prompt and response in {historypath}\n")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+
+
 def main():
     prompt_download()
     try:
@@ -108,9 +131,11 @@ def main():
             print(f"Recognized speech: {speech}")
             print("\nprompt :", speech, "\n")
             """choose here between gemini and llama3"""
-            response = ask_gemini(speech)
-            #response = ask_llama(speech)
+
+            #response = ask_gemini(speech)
+            response = ask_llama(speech)
             save_to_txt(response)
+            save_prompt_and_response(speech, response)
             sys.exit(0)
         else:
             print("No speech recognized, or an error occurred.")
