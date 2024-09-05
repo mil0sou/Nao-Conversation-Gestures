@@ -46,7 +46,7 @@ Follow these steps to set up the environment and install the necessary dependenc
 
 3. Edit the code 
 
-    Edit each file to use your NAO IP, your computer paths, your [google API key](https://ai.google.dev/gemini-api/docs/quickstart?hl=en&lang=python) or [llama API key](https://docs.llama-api.com/api-token)
+    Edit each file to use your NAO IP, your computer paths (IN MOST FILES !), your [google API key](https://ai.google.dev/gemini-api/docs/quickstart?hl=en&lang=python) or [llama API key](https://docs.llama-api.com/api-token)
     Create a file named .env and write your keys in it :
     ```bash
     GOOGLE_API_KEY= #your keys here
