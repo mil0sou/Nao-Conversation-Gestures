@@ -35,7 +35,7 @@ recording_thread = None
 listen_duration = 2.0  # seconds avant qu'il s'arrête de record
 quitpg = False
 audio_path = "/home/nao/audio/prompt.wav"
-AUDIO_THRESHOLD = 0.7  # 0 = hearing impaired and 1 = hypersensitive
+AUDIO_THRESHOLD = 0.6 # 0 = hearing impaired and 1 = hypersensitive
 
 
 used_joints = [

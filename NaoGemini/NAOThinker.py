@@ -34,7 +34,10 @@ def open_history():
 
 
 def ask_llama(speech):
-    llama = LlamaAPI("LL-pZPlvP5fCPF8feUFty3uooyp02FiiJB8wluy7wpWT3ivgwi7ImHLtTyGZAMF10Wi")  # your Llama API key
+    
+    load_dotenv() #load the key from the .env file
+    llama_key = os.getenv("LLAMA_API_KEY")
+    llama = LlamaAPI(llama_key) # my llama api key
     history = open_history()
     prompt = history + "\n here is your current chat history, use this to remember context from earlier : \n" + speech
     print(prompt)
