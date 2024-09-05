@@ -1,4 +1,4 @@
-# NAO-Gemini Conversation Interface & Gesture imitation
+# NAO-Gemini/Llama Conversation Interface & Gesture imitation
 
 The first project allows you to interact with Google's Gemini or Meta's LLama3 conversational AI through a NAO robot.
 The second will make the robot move by imitating your body movements (with an azure kinect DK camera) (still in developement)
