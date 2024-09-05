@@ -1,7 +1,9 @@
-# NAO-Gemini Conversation Interface & Gesture imitation
+# NAO-Gemini/Llama Conversation Interface & Gesture imitation
 
 The first project allows you to interact with Google's Gemini or Meta's LLama3 conversational AI through a NAO robot.
-The second 
+The second will make the robot move by imitating your body movements (with an azure kinect DK camera) (still in developement)
+
+The robots eyes will turn yellow when he detects your face, and green when recording your request. 
 
 ## Installation
 
@@ -32,15 +34,19 @@ Follow these steps to set up the environment and install the necessary dependenc
 
 2. Install the dependencies:
 
+
     ```bash
-    pip install paramiko speech_recognition google.generativeai
+    pip install numpy pykinect_azure llamaapi python-dotenv SpeechRecognition  
+    pip install paramiko
+    pip install -U google-generativeai
     ```
 
-    [naoqi installation guide](http://doc.aldebaran.com/2-8/dev/python/install_guide.html) 
+    [naoqi download](https://www.aldebaran.com/en/support/nao-6/downloads-softwares)      [naoqi installation guide](http://doc.aldebaran.com/2-8/dev/python/install_guide.html)     [Microsoft Visual Package](https://www.microsoft.com/en-us/download/details.aspx?id=26999)
+
 
 3. Edit the code 
 
-    Edit each file to use your NAO IP, your computer paths, your [google API key](https://ai.google.dev/gemini-api/docs/quickstart?hl=en&lang=python)
+    Edit each file to use your NAO IP, your computer paths, your [google API key](https://ai.google.dev/gemini-api/docs/quickstart?hl=en&lang=python) or [llama API key](https://docs.llama-api.com/api-token)
 
 ## Usage
 
