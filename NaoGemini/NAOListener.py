@@ -5,8 +5,7 @@
 #  Author     : Milo Soulard
 #  Python     : 2.7
 #  Date       : Summer 2024
-#  Description: 
-#               NOT USED ANYMORE
+#  Description: NOT USED ANYMORE
 # 
 #               Detects audio signals
 #               Maybe detects face
