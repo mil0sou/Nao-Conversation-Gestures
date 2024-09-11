@@ -2,7 +2,7 @@
 
 # ===============================================
 #  File       : NAOTalker.py
-#  Author     : Milo Soulard
+#  Author     : Milo Soulard (milosoulardgeii@gmail.com)
 #  Python     : 2.7
 #  Date       : Summer 2024
 #  Description: Receives the response from gemini and makes the robot talk

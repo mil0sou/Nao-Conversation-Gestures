@@ -2,7 +2,7 @@
 
 # ===============================================
 #  File       : NAOFaceListener.py
-#  Author     : Milo Soulard
+#  Author     : Milo Soulard (milosoulardgeii@gmail.com)
 #  Python     : 2.7
 #  Date       : Summer 2024
 #  Description: Detects audio signals
@@ -19,23 +19,18 @@ import time
 import threading
 import socket
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(("localhost", 12345))
-server_socket.listen(1)
-conn, addr = server_socket.accept()
 
-IP = "192.168.1.240"
+IP = "192.168.1.240" #use your own nao IP
 PORT = 9559
-
-myBroker = ALBroker("myBroker", "0.0.0.0", 0, IP, PORT)
 
 facing = False
 recording = False
 recording_thread = None
-listen_duration = 2.0  # seconds avant qu'il s'arrête de record
 quitpg = False
-audio_path = "/home/nao/audio/prompt.wav"
+listen_duration = 2.0  # seconds without sound before recording stops
+audio_path = "/home/nao/audio/prompt.wav" # stored on the nao robot
 AUDIO_THRESHOLD = 0.6 # 0 = hearing impaired and 1 = hypersensitive
+
 
 
 used_joints = [
@@ -71,38 +66,48 @@ ununsed_joints = [
 ]
 
 
-leds = ALProxy("ALLeds", IP, PORT)
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind(("localhost", 12345))
+server_socket.listen(1) 
+conn, addr = server_socket.accept() #launchs socket transmission for receiving face data 
+
+myBroker = ALBroker("myBroker", "0.0.0.0", 0, IP, PORT)
+leds = ALProxy("ALLeds", IP, PORT) # init eyes 
 leds.on("FaceLeds")
+
 
 
 def round_points(points):
     return [round(p, 2) for p in points]
 
 
-def update_status():
+def update_status(): #eyes and terminal display
     global facing, recording
+
     status = "face : {facing} | recording : {recording}".format(
         facing="TRUE" if facing else "false", recording="TRUE" if recording else "false"
     )
     sys.stdout.write("\r" + status)
     sys.stdout.flush()
+
     if recording:
-        leds.fadeRGB("FaceLeds", 0x00FF00, 0.01)  # vert
+        leds.fadeRGB("FaceLeds", 0x00FF00, 0.01)  # green
     else:
         if facing:
-            leds.fadeRGB("FaceLeds", 0xFFFF00, 0.01)  # Jaune
+            leds.fadeRGB("FaceLeds", 0xFFFF00, 0.01)  # yellow
         else:
-            leds.fadeRGB("FaceLeds", 0xFFFFFF, 0.01)  # blanc
+            leds.fadeRGB("FaceLeds", 0xFFFFFF, 0.01)  # white
 
 
 class SoundDetectionModule(ALModule):
     def __init__(self, name, IP, PORT):
-        # initializes
+        # initializes all proxies
         ALModule.__init__(self, name)
         self.memory = ALProxy("ALMemory", IP, PORT)
-        self.memory.subscribeToEvent("SoundDetected", name, "onSoundDetected")
+        self.memory.subscribeToEvent("SoundDetected", name, "onSoundDetected") #calls the function onSoundDetected when sound detected
         self.sound_detection = ALProxy("ALSoundDetection", IP, PORT)
-        self.sound_detection.setParameter("Sensibility", AUDIO_THRESHOLD)
+        self.sound_detection.setParameter("Sensibility", AUDIO_THRESHOLD) #parameters
 
     # called function when sound is detected
     def onSoundDetected(self, eventName, value, subscriberIdentifier):
@@ -128,25 +133,25 @@ class SoundDetectionModule(ALModule):
 
 def start_recording():
     global recording, recording_thread
-    tts = ALProxy("ALTextToSpeech", IP, PORT)
+    #tts = ALProxy("ALTextToSpeech", IP, PORT)
     # tts.say("Hi!") # if sound is detected
     audio_recorder = ALProxy("ALAudioRecorder", IP, PORT)
     audio_recorder.stopMicrophonesRecording()
-    audio_recorder.startMicrophonesRecording(audio_path, "wav", 16000, [0, 0, 1, 0])
+    audio_recorder.startMicrophonesRecording(audio_path, "wav", 16000, [0, 0, 1, 0]) #settings : type, samplerate, channels
     print("Recording started.")
 
 
-def stop_recording():
+def stop_recording():  # quits program
     global recording, myBroker, quitpg
     audio_recorder = ALProxy("ALAudioRecorder", IP, PORT)
     audio_recorder.stopMicrophonesRecording()
-    leds.fadeRGB("FaceLeds", 0x0000FF, 0.01)  # blanc
+    leds.fadeRGB("FaceLeds", 0x0000FF, 0.01)  # white
     print("Recording stopped.")
     recording = False
     quitpg = True
     SoundDetection.memory.unsubscribeToEvent("SoundDetected", "SoundDetection")
     myBroker.shutdown()
-    sys.exit(0)
+    sys.exit(0) 
 
 
 def main(IP, PORT=9559):
@@ -166,17 +171,20 @@ def main(IP, PORT=9559):
     motion.wakeUp()  # robot will track your face
 
     basic_awareness.startAwareness()
-    """postureProxy = ALProxy("ALRobotPosture", IP, PORT)
-    postureProxy.goToPosture("Sit", 1.0)"""
+    postureProxy = ALProxy("ALRobotPosture", IP, PORT)
+    postureProxy.goToPosture("Sit", 1.0)  # sits down correctly
     time.sleep(0.05)
-    SoundDetection = SoundDetectionModule("SoundDetection", IP, PORT)
+
+    SoundDetection = SoundDetectionModule("SoundDetection", IP, PORT) #initializes
+
     try:
         while not quitpg:
             time.sleep(0.05)
             data = conn.recv(1024)
             facing = "1" in data
-            update_status()
 
+            update_status() # eyes and terminal display
+ 
             # print("face detected:", data)
             # facing = data == "1" #str to bool
             #
