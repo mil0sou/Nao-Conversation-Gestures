@@ -65,15 +65,11 @@ Follow these steps to set up the environment and install the necessary dependenc
 
 Make sure NAO and your computer are connected to the same network. 
 
-![code diagram](https://github.com/mil0sou/Nao-Conversation-Gestures/blob/main/NAO_Gemini_Diagram.png?raw=true)
-
-
-
-
-
-
 To start the conversation interface between the NAO robot and Google's Gemini AI, or gesture imitation : run in either folder:
 
 ```bash
 python3 main.py
 ```
+
+![code diagram](https://github.com/mil0sou/Nao-Conversation-Gestures/blob/main/NAO_Gemini_Diagram.png?raw=true)
+
