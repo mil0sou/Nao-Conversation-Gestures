@@ -40,11 +40,19 @@ Follow these steps to set up the environment and install the necessary dependenc
     pip install paramiko
     pip install -U google-generativeai
     ```
+    
+    download the 2.1.4 version of the SDK and the 32 bits python 2.7 msi file
+    
+    [direct naoqi download link](https://community-static.aldebaran.com/resources/2.1.4.13/sdk-python/pynaoqi-2.1.4.13.win32.exe)
+    [python 2.7 32 bits windows installer](https://www.python.org/ftp/python/2.7.18/python-2.7.18.msi)
 
-    [naoqi download](https://www.aldebaran.com/en/support/nao-6/downloads-softwares)      [naoqi installation guide](http://doc.aldebaran.com/2-8/dev/python/install_guide.html)     [Microsoft Visual Package](https://www.microsoft.com/en-us/download/details.aspx?id=26999)
+    [naoqi download page](https://www.aldebaran.com/en/support/nao-6/downloads-softwares)
+    [naoqi installation guide](http://doc.aldebaran.com/2-1/dev/python/install_guide.html)
+    [Microsoft Visual Package](https://www.microsoft.com/en-us/download/details.aspx?id=26999)        
+   
 
 
-3. Edit the code 
+4. Edit the code 
 
     Edit each file to use your NAO IP, your computer paths (IN MOST FILES !), your [google API key](https://ai.google.dev/gemini-api/docs/quickstart?hl=en&lang=python) or [llama API key](https://docs.llama-api.com/api-token)
     Create a file named .env and write your keys in it :
