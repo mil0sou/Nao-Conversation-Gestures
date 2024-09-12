@@ -45,7 +45,7 @@ Follow these steps to set up the environment and install the necessary dependenc
     
     [direct naoqi download link](https://community-static.aldebaran.com/resources/2.1.4.13/sdk-python/pynaoqi-2.1.4.13.win32.exe)
     [python 2.7 32 bits windows installer](https://www.python.org/ftp/python/2.7.18/python-2.7.18.msi)
-
+    [azure kinect body tracking sdk installer](https://www.microsoft.com/en-us/download/details.aspx?id=104221)
     [naoqi download page](https://www.aldebaran.com/en/support/nao-6/downloads-softwares)
     [naoqi installation guide](http://doc.aldebaran.com/2-1/dev/python/install_guide.html)
     [Microsoft Visual Package](https://www.microsoft.com/en-us/download/details.aspx?id=26999)        
