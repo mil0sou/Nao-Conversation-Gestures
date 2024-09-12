@@ -5,21 +5,19 @@
 #  Author     : Milo Soulard
 #  Python     : 3.x
 #  Date       : Summer 2024
-#  Description: Starts the program
+#  Description: Takes the skeleton from the robot and transmits every joint to the Mover program 
 #  Credits    : https://github.com/Oswualdo/Teleoperation-and-control-of-a-humanoid-robot-NAO-through-body-gestures
 # ===============================================
 
 
 #import cv2
 import time
-import argparse
 import numpy as np
 import pykinect_azure as pykinect
 import socket 
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('localhost', 12345))
-# for sending data 
+client_socket.connect(('localhost', 12345)) # for sending data 
 
 def get_quaternion(joint): #return quaterions
     orientation = joint.orientation
@@ -27,7 +25,7 @@ def get_quaternion(joint): #return quaterions
 
 # maths
 
-def get_angles(KneeLeftPos, HipLeftPos, AnkleLeftPos):
+def get_angles(KneeLeftPos, HipLeftPos, AnkleLeftPos): #retreives angle from different points 
     trans_a = HipLeftPos - KneeLeftPos
     trans_b = AnkleLeftPos - KneeLeftPos
     angles = np.arccos(np.sum(trans_a * trans_b, axis = 0)/(np.sqrt(np.sum(trans_a ** 2, axis = 0)) * np.sqrt(np.sum(trans_b ** 2, axis = 0))))
@@ -307,17 +305,18 @@ def main():
             if mus_lateral_2 < -.78:  # -45:
                 mus_lateral_2 = -.78  # -45
             
+            #get all the angles in an array 
             angles = [HombroCodo_V2, Hombro_V2, Rota_codo_D, z, HombroCodo_V2I,Hombro_V2I, 0, z_2]
             for i in range(len(angles)): 
                 angle2 = round(float(angles[i]), 2)
                 angles[i] = angle2
-            array_str = ','.join([str(x) for x in angles])
+            array_str = ','.join([str(x) for x in angles]) #convert the array into a srting 
             # print(array_str)
-            client_socket.sendall(array_str.encode())
+            client_socket.sendall(array_str.encode()) # send it on the socket to the other program 
             time.sleep(0.05)
 
 if __name__ == "__main__":
-    pykinect.initialize_libraries(track_body=True)
+    pykinect.initialize_libraries(track_body=True) #kinect initialization
     device_config = pykinect.default_configuration
     device_config.color_resolution = pykinect.K4A_COLOR_RESOLUTION_OFF
     device_config.depth_mode = pykinect.K4A_DEPTH_MODE_WFOV_2X2BINNED
@@ -329,7 +328,7 @@ if __name__ == "__main__":
     skeleton = body_frame.get_body_skeleton(0)  
     raised = False
     #cv2.namedWindow('Depth image with skeleton', cv2.WINDOW_NORMAL)
-    main()
+    main() # launch
 
 
 

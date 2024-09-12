@@ -5,7 +5,7 @@
 #  Author     : Milo Soulard
 #  Python     : 2.7
 #  Date       : Summer 2024
-#  Description: Makes the robot move using the data given by the camera program
+#  Description: Makes the robot move using the joints data given by the camera program
 # ===============================================
 
 
@@ -21,11 +21,11 @@ nao_port = 9559
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind(('localhost', 12345))
 server_socket.listen(1)
-conn, addr = server_socket.accept()
+conn, addr = server_socket.accept() #connects to the socket 
 
 armjoints = ["RShoulderRoll", "RShoulderPitch", "RElbowYaw", "RElbowRoll","LShoulderRoll", "LShoulderPitch", "LElbowYaw", "LElbowRoll"]
 #motionProxy = ALProxy("ALMotion", nao_ip, nao_port)
-movespeed = 0.2
+movespeed = 0.2 # 0 slow 1 fast 
 
 LIMITS = {
     'HeadYaw': [-2.0, 2.0], 
@@ -164,7 +164,7 @@ plt.show()
 """from naoqi import ALProxy
 import socket 
 nao_ip = "192.168.1.240"
-nao_port = 9559
+nao_port = 9559     #SKFXHZKR
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind(('localhost', 12345))

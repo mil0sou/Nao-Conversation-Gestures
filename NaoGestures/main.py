@@ -11,6 +11,8 @@
 import subprocess
 import threading
 
+# unlike in the gemini program, both scripts are run at the same time
+
 python27path = r"C:\Python27\python.exe"
 python312path = r"C:\Users\soula\AppData\Local\Microsoft\WindowsApps\python3.exe"
 
