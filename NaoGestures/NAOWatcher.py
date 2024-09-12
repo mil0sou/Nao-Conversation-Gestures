@@ -23,7 +23,8 @@ def get_quaternion(joint): #return quaterions
     orientation = joint.orientation
     return orientation.wxyz
 
-# the joints maths problems begin here !
+# the joints maths problems begin here ! :
+#differents points on the skeleton of NAO and the body tracking program : you need to convert them using quaternions and stuff
 
 def get_angles(KneeLeftPos, HipLeftPos, AnkleLeftPos): #retreives angle from different points 
     trans_a = HipLeftPos - KneeLeftPos
