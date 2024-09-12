@@ -23,7 +23,7 @@ def get_quaternion(joint): #return quaterions
     orientation = joint.orientation
     return orientation.wxyz
 
-# maths
+# the joints maths problems begin here !
 
 def get_angles(KneeLeftPos, HipLeftPos, AnkleLeftPos): #retreives angle from different points 
     trans_a = HipLeftPos - KneeLeftPos
